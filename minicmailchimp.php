@@ -18,10 +18,9 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
+*  @author Minic Studio <office@minic.ro>
+*  @copyright  2013 S.C. Minic Studio S.R.L.
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
 */
 
 if (!defined('_PS_VERSION_'))
@@ -35,15 +34,15 @@ class MinicMailchimp extends Module
 	{
 		$this->name = 'minicmailchimp';
 		$this->tab = 'front_office_features';
-		$this->version = '0.0.0';
+		$this->version = '0.1';
 		$this->author = 'minic studio';
 		$this->need_instance = 0;
 		$this->secure_key = Tools::encrypt($this->name);
 
 		parent::__construct();
 
-		$this->displayName = $this->l('Mailchimp subscriber module.');
-		$this->description = $this->l('Displays a subscriber form.');
+		$this->displayName = $this->l('Minic mailchimp sync');
+		$this->description = $this->l('Displays the Mailchimp subscriber form.');
 	}
 
 	/**
@@ -51,7 +50,7 @@ class MinicMailchimp extends Module
 	 */
 	public function install()
 	{
-		if (!parent::install() || !$this->registerHook('displayHome') || !$this->registerHook('displayHeader'))
+		if (!parent::install() || !$this->registerHook('displayFooter') || !$this->registerHook('displayHeader'))
 			return false;
 		return true;
 	}
@@ -63,20 +62,18 @@ class MinicMailchimp extends Module
 		return true;
 	}
 
+	public function getContent()
+	{
+
+	}
+
 	public function hookDisplayHeader()
 	{
-		$this->context->controller->addCSS($this->_path.$this->name.'.css');
+		// $this->context->controller->addCSS($this->_path.$this->name.'.css');
 	}
 
-	public function hookDisplayHome()
+	public function hookDisplayFooter()
 	{
-		return $this->display(__FILE__, 'minicmailchimp.tpl');
+		// return $this->display(__FILE__, '');
 	}
-
-	public function hookDisplayFooterProduct()
-	{
-		return $this->display(__FILE__, 'minicmailchimp.tpl');
-	}
-
-
 }

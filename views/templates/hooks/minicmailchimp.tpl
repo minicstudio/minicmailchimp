@@ -1,3 +1,27 @@
+{*
+* 2007-2012 PrestaShop
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author Minic Studio <office@minic.ro>
+*  @copyright  2013 S.C. Minic Studio S.R.L.
+*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*}
+
 <!-- Begin MailChimp Signup Form -->
 <div id="mc_embed_signup" class="content-separator">
 	<form action="http://minic.us6.list-manage.com/subscribe/post?u=7c9480b10caf70408b459694e&amp;id=ee4b05e9de" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
