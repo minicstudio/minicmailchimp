@@ -20,12 +20,19 @@
 		<div id="banner"></div>
 		<div id="navigation">
 			<a href="#settings" class="minic-open">{l s='Settings' mod='minicmailchimp'}</a>
+			{if $minic.settings.apikey}
+				<a href="#import" class="minic-open">{l s='Import' mod='minicmailchimp'}</a>
+			{/if}
 		</div>
 	</div>
 	<!-- Messages -->
 	{include file="{$minic.admin_tpl_path}messages.tpl" id="global" text=$minic.message.text class=$minic.message.type}
 	<!-- Settings -->
 	{include file="{$minic.admin_tpl_path}settings.tpl"}
+	{if $minic.settings.apikey}
+		<!-- Import -->
+		{include file="{$minic.admin_tpl_path}import.tpl"}
+	{/if}
 	<!-- feedback -->
 	{include file="{$minic.admin_tpl_path}feedback.tpl"}
 	<!-- bug report -->

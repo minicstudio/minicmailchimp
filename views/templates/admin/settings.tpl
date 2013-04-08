@@ -1,4 +1,4 @@
-<div id="settings" class="minic-container">{debug}
+<div id="settings" class="minic-container" {if !$minic.settings.apikey}style="display:block;"{/if}>{debug}
 	<form id="form-feed" class="" method="post" action="{$minic.form_action}">
         <div class="minic-top">
             <h3>{l s='Settings' mod='minicmailchimp'}
@@ -14,7 +14,13 @@
             <div class="switch-holder inline">
                 <label>{l s='Use SSL'}: </label>
                 <div class="switch small {if isset($minic.settings.ssl) && $minic.settings.ssl}active{else}inactive{/if}">
-                    <input type="radio" id="r-hover" class="" name="ssl"  value="{if isset($minic.settings.ssl) && $minic.settings.ssl}1{else}0{/if}" checked="true" />
+                    <input type="radio" class="" name="ssl"  value="{if isset($minic.settings.ssl) && $minic.settings.ssl}1{else}0{/if}" checked="true" />
+                </div>
+            </div>
+            <div class="switch-holder inline">
+                <label>{l s='Sync new registration'}: </label>
+                <div class="switch small {if isset($minic.settings.registration) && $minic.settings.registration}active{else}inactive{/if}">
+                    <input type="radio" class="" name="registration"  value="{if isset($minic.settings.registration) && $minic.settings.registration}1{else}0{/if}" checked="true" />
                 </div>
             </div>
             <div class="minic-comments"> 

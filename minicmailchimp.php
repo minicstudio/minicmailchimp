@@ -20,11 +20,15 @@
 if (!defined('_PS_VERSION_'))
   exit;
  
+require_once 'MCAPI.class.php';
+
 class MinicMailchimp extends Module
 {
 	// DB file
 	const INSTALL_SQL_FILE = 'install.sql';
 
+	private $api_key;
+	private $ssl;
 	private $module_path;
 	private $admin_tpl_path;
 	private $front_tpl_path;
@@ -96,7 +100,7 @@ class MinicMailchimp extends Module
 	 */
 	public function uninstall()
 	{
-		if (!parent::uninstall())
+		if (!parent::uninstall() || !Configuration::deleteByName('MINIC_MAILCHIMP_SETTINGS'))
 			return false;
 		return true;
 	}
@@ -106,9 +110,14 @@ class MinicMailchimp extends Module
 	 */	
 	public function getContent()
 	{
+		if(!$this->getMailchimpLists())
+			$error = true;
+
 		if(Tools::isSubmit('submitSettings'))
 			$this->saveSettings();
 
+		if(Tools::isSubmit('submitImport'))
+			$this->importCustomers();
 
 
 		// Smarty for admin
@@ -148,6 +157,39 @@ class MinicMailchimp extends Module
 		return $this->display(__FILE__, 'views/templates/admin/minicmailchimp.tpl');
 	}
 
+	public function importCustomers()
+	{
+		$all_customers = 0;
+		if(!Tools::isSubmit('list') || !Tools::getValue('list')){
+			$this->message = array('text' => $this->l('List is required! Please select one.'), 'type' => 'error');
+			return;
+		}
+		if(!Tools::isSubmit('all-user')){
+			$this->message = array('text' => $this->l('The type of Customers to import is required.'), 'type' => 'error');
+			return;		
+		}else{
+			$all_customers = 1;
+		}
+
+
+
+	}
+
+	public function getMailchimpLists()
+	{
+		$mailchimp = new MCAPI($this->api_key, $this->ssl);
+
+		$lists = $mailchimp->lists();
+
+		if ($mailchimp->errorCode){
+			$this->message = array('text' => $this->l('Mailchimp error code:').' '.$mailchimp->errorCode.'<br />'.$this->l('Milchimp message:').' '.$mailchimp->errorMessage, 'type' => 'error');
+			return;
+		} else {
+			$this->context->smarty->assign('mailchimp_list', $lists);
+			return true;
+		}
+	}
+
 	/**
 	 * Save settings into PS Configuration
 	 */
@@ -163,9 +205,14 @@ class MinicMailchimp extends Module
 			$this->message = array('text' => $this->l('SSL save failed!'), 'type' => 'error');
 			return;	
 		}
+		if(!Tools::getValue('registration') && Tools::getValue('registration') != 0){
+			$this->message = array('text' => $this->l('Sync new registration save failed!'), 'type' => 'error');
+			return;	
+		}
 
 		$settings['apikey'] = Tools::getValue('apikey');
 		$settings['ssl'] = (int)Tools::getValue('ssl');
+		$settings['registration'] = (int)Tools::getValue('registration');
 
 		Configuration::updateValue('MINIC_MAILCHIMP_SETTINGS', serialize($settings));
 
