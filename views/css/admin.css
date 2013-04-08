@@ -1,0 +1,315 @@
+@import url('buttons.css');
+@import url('popup.css');
+
+/* GLOBAL */
+	#minic > div{
+		
+	}
+	#minic a,
+	#minic input,
+	#minic select,
+	#minic textarea,
+	#minic span,
+	#minic label{
+		-webkit-transition: all 0.3s ease-in-out;
+		-moz-transition: all 0.3s ease-in-out;
+		-o-transition: all 0.3s ease-in-out;
+		transition: all 0.3s ease-in-out;
+
+		-webkit-backface-visibility: hidden;
+	}
+	/* Labels */
+	#minic label{
+		float: none;
+		width: auto;
+		text-align: left;
+		padding: 0;
+	}
+	/* Inputs */
+	#minic input[type="submit"]{
+		-webkit-box-sizing: content-box;
+		-moz-box-sizing: content-box;
+		-ms-box-sizing: content-box;
+		box-sizing: content-box;
+	}
+	#minic input[type="submit"]:hover{
+		cursor: pointer;
+	}
+	#minic input[type="text"],
+	#minic input[type="file"],
+	#minic select,
+	#minic textarea{
+		padding: 5px;
+		outline: none !important;
+		border: 1px solid #c7c7c7;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+	}
+	#minic input[type="text"]:hover,
+	#minic input[type="file"]:hover,
+	#minic select:hover,
+	#minic textarea:hover{
+		border: 1px solid #a8a8a8;
+	}
+	#minic input:focus,
+	#minic input[type="file"]:focus,
+	#minic select:focus,
+	#minic textarea:focus{
+		-webkit-box-shadow:  0px 0px 5px 1px rgba(0, 0, 0, 0.22);
+	    box-shadow:  0px 0px 5px 1px rgba(0, 0, 0, 0.22);
+	    font-style: normal;
+	}
+	/* Messages */
+		#minic .message{
+			position: relative;
+			padding-left: 50px !important;
+			padding-right: 50px !important;
+		}
+		#minic .message span.close{
+			position: absolute;
+			right: 10px;
+			top: 10px;
+			font-size: 18px;
+		}
+		#minic .message span.close:hover{
+			cursor: pointer;
+		}
+		#minic .message p{
+			margin: 0;
+		}
+		/* Errors */
+		#minic .error span.close{
+			color: #521216;
+		}
+		/* Conf */
+/* HEADER */
+	#minic .header > div{
+		margin-bottom: 15px;
+	}
+	/* Menu Top */
+	#menu-top{
+		display: inline-block;
+		width: 100%;
+	}
+	#menu-top a,
+	#menu-top #more-module{
+		float: right;
+		color: #525252;
+		font-size: 12px;
+		font-weight: bold;
+		padding: 0 10px;
+		border-right: 1px solid #525252;
+	}
+	#menu-top a:first-child{
+		border: 0;
+		padding-right: 0;
+	}
+		/* More module */
+		#menu-top #more-module{
+			position: relative;
+		}
+			#menu-top #more-module span:hover{
+				cursor: pointer;
+			}
+			#menu-top ul#module-list{
+				display: none;
+				position: absolute;
+				right: 0;
+				top: 15px;
+				width: 400px;
+				padding: 10px;
+				background: #ebedf4;
+				border: 1px solid #d7dae1;
+				border-radius: 3px;
+			}
+			#menu-top #more-module:hover ul{
+				display: block;
+			}
+				#menu-top #minic-studio{
+					text-indent: -99999px;
+					width: 16px;
+					height: 16px;
+					background: url(../img/minic-logo.png) right center no-repeat;
+				}
+				#menu-top #open-bug{
+					border: 0;
+					margin-right: 50px;
+				}
+				/* Module list style */
+				#menu-top ul#module-list li a{
+					width: 378px;
+					padding: 5px 10px;
+					margin-bottom: 5px;
+					border: 1px solid transparent;
+				}
+				#menu-top ul#module-list li:hover a{
+					background-color: #e2e4eb;
+					border-color: #c5c8d1;
+				}
+				#menu-top ul#module-list img{
+					float: left;
+					margin-right: 10px;
+				}
+				#menu-top ul#module-list p{
+					float: left;
+					width: 336px;
+					margin: 0;
+				}
+				#menu-top ul#module-list p span{
+					display: block;
+					clear: both;
+					width: 100%;
+				}
+				#menu-top ul#module-list .title{
+					font-size: 14px;
+					color: #000;
+				}
+				#menu-top ul#module-list .description{
+					font-size: 12px;
+					font-weight: normal;
+				}
+				#menu-top ul#module-list .price{
+					font-weight: bold;
+					color: green;
+				}
+		/* Social */
+		#menu-top .social{
+			font-size: 16px;
+		}
+			/* Facebook */
+			#menu-top .icon-facebook{
+				color: #3b5998;
+			}
+			/* Twitter */
+			#menu-top .icon-twitter{
+				color: #019ad2;
+			}
+			/* Github */
+			#menu-top .icon-github{
+				color: #000;
+			}
+			/* Google */
+			#menu-top .icon-googleplus{
+				color: #dd4b39;
+			}
+	/* Banner */
+	/* Navigation */
+	#navigation{
+		/*display: inline-block;*/
+		padding: 10px;
+		background: #ebedf4;
+		border: 1px solid #d7dae1;
+	}
+	#navigation a{
+		display: inline-block;
+		padding: 40px 10px 3px 10px;
+		height: 14px;
+		min-width: 51px;
+		border: 1px solid transparent;
+		color: #767676;
+		font-weight: bold;
+		font-size: 11px;
+		text-align: center;
+	}
+	#navigation a:hover{
+		background-color: #e2e4eb;
+		border-color: #c5c8d1;
+	}
+		/* Icons */
+		/*#navigation a.sample{}*/
+/* CONTENT */
+	/* minic container */
+	.minic-container{
+		display: none;
+		background: #f8f8f8;
+		border: 1px solid #c5c8d1;
+		margin-bottom: 50px;
+	}
+		/* minic top */
+		.minic-top{
+			position: relative;
+			width: 94%;
+			padding: 0 3%;
+			background: #e5e5e5;
+			border-bottom: 1px solid #c5c8d1;
+		}
+		.minic-top h3{
+			display: inline-block;
+			width: 100%;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			-ms-box-sizing: border-box;
+			box-sizing: border-box;
+			margin: 20px 0;
+			padding-right: 45px;
+			font-size: 22px;
+			color: #717171;
+			font-weight: normal;
+			text-shadow: 1px 1px 1px #ffffff;
+		}
+		.minic-top .help{
+			float: right;
+			height: auto;
+			font-size: 12px;
+			color: #494949;
+			text-transform: uppercase;
+			text-shadow: 1px 1px 1px #ffffff;
+		}
+		.minic-top .minic-close{
+			display: block;
+			text-indent: -99999px;
+			position: absolute;
+			right: 3%;
+			top: 18px;
+			width: 34px;
+			height: 34px;
+			background: url(../img/buttons/close-normal.png) no-repeat;
+		}
+		.minic-top .minic-close:hover{
+			background: url(../img/buttons/close-hover.png) no-repeat;
+		}
+		/* minic content */
+		.minic-content{
+			position: relative;
+			display: inline-block;
+			width: 94%;
+			padding: 50px 3%;	
+		}
+			/* minic content -> input cotnainers */
+			.minic-content > div.input-holder{
+				float: left;
+				clear: both;
+				width: 45%;
+				margin: 0 5% 10px 0;
+			}
+			.minic-content > div.input-holder label{
+				display: block;
+			}
+			.minic-content > div.input-holder input[type="text"],
+			.minic-content > div.input-holder textarea{
+				clear: both;
+				width: 94%;
+				max-width: 400px;
+			}
+			/* minic-content -> minic comment */
+			.minic-content .minic-comments{
+				display: inline-block;
+				width: 45%;
+				margin-top: -15px;
+			}
+			.minic-content .minic-comments span{
+				color: #000;
+				font-weight: bold;
+			}
+		/* minic bottom */
+		.minic-bottom{
+			display: inline-block;
+			width: 94%;
+			padding: 10px 3%;
+			background: #e5e5e5;
+			border-top: 1px solid #c5c8d1;
+		}
+		.minic-bottom > *{
+			float: right;
+			margin-left: 10px;
+		}

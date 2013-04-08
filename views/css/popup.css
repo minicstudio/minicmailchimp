@@ -1,0 +1,95 @@
+/* Popup Start */
+.popup{
+	display: none;
+	overflow: auto;
+	z-index: 999;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0, .5);
+}	
+	/* Inner */
+	.popup .inner{
+		position: absolute;
+		top: 25%;
+		left: 50%;
+		margin-left: -25%;
+		width: 50%;
+		-webkit-border-radius: 10px;
+		border-radius: 10px;
+		-webkit-box-shadow:  0px 0px 65px 10px rgba(0, 0, 0, 0.24);
+        box-shadow:  0px 0px 65px 10px rgba(0, 0, 0, 0.24);
+		background: #fff;
+		background-image: linear-gradient(bottom, rgb(224,224,224) 1%, rgb(253,253,253) 51%);
+		background-image: -o-linear-gradient(bottom, rgb(224,224,224) 1%, rgb(253,253,253) 51%);
+		background-image: -moz-linear-gradient(bottom, rgb(224,224,224) 1%, rgb(253,253,253) 51%);
+		background-image: -webkit-linear-gradient(bottom, rgb(224,224,224) 1%, rgb(253,253,253) 51%);
+		background-image: -ms-linear-gradient(bottom, rgb(224,224,224) 1%, rgb(253,253,253) 51%);
+
+		background-image: -webkit-gradient(
+			linear,
+			left bottom,
+			left top,
+			color-stop(0.01, rgb(224,224,224)),
+			color-stop(0.51, rgb(253,253,253))
+		);
+	}
+	.popup .inner .header{
+		-webkit-border-radius: 10px 10px 0 0;
+		border-radius: 10px 10px 0 0;
+		background: url(../img/popup/bg-header.png) repeat-x;
+	}
+	.popup .inner .header h4{
+		margin: 0;
+		padding: 10px 10px 10px 30px;
+		line-height: 25px;
+		color: #535252;
+		font-size: 18px;
+		text-shadow: 1px 1px 1px #ffffff;
+	}
+	.popup .inner .header .close-popup{
+		display: block;
+		text-indent: -99999px;
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		width: 25px;
+		height: 26px;
+		background: url(../img/popup/close.png) no-repeat;
+	}
+	.popup .inner .header .close-popup:hover{
+		cursor: pointer;
+	}
+	.popup .inner .popup-content{
+		padding: 10px 30px;
+	}
+	.popup .inner .popup-content .container{
+		min-height: 75px;
+		border-bottom: 1px solid #bcbcbc;
+		padding-bottom: 20px;
+	}
+	.popup .inner .popup-content .container.trash{
+		padding-left: 90px;
+		background: url(../img/popup/trash.png) left top no-repeat;
+	}
+	.popup .inner .popup-content .container p{
+		margin-bottom: 15px;
+	}
+	.popup .inner .popup-content .container input{
+		width: 100%;
+		max-width: 200px;
+	}
+	.popup .inner .popup-content .buttons{
+		width: 100%;
+		display: inline-block;
+		padding-top: 10px;
+		border-top: 1px solid #fff;
+	}
+	.popup .inner .popup-content .buttons a,
+	.popup .inner .popup-content .buttons input{
+		float: right;
+		margin-left: 10px;
+	}
+/* Popup End */
