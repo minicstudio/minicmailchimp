@@ -19,11 +19,13 @@
 		</div>
 		<div id="banner"></div>
 		<div id="navigation">
-			<a href="">{l s='Menu item' mod='minicmailchimp'}</a>
-			<a href="">{l s='Menu item' mod='minicmailchimp'}</a>
-			<a href="">{l s='Menu item' mod='minicmailchimp'}</a>
+			<a href="#settings" class="minic-open">{l s='Settings' mod='minicmailchimp'}</a>
 		</div>
 	</div>
+	<!-- Messages -->
+	{include file="{$minic.admin_tpl_path}messages.tpl" id="global" text=$minic.message.text class=$minic.message.type}
+	<!-- Settings -->
+	{include file="{$minic.admin_tpl_path}settings.tpl"}
 	<!-- feedback -->
 	{include file="{$minic.admin_tpl_path}feedback.tpl"}
 	<!-- bug report -->

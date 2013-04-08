@@ -53,6 +53,10 @@ class MinicMailchimp extends Module
 		$this->front_tpl_path	= _PS_MODULE_DIR_.$this->name.'/views/templates/front/';
 		$this->hooks_tpl_path	= _PS_MODULE_DIR_.$this->name.'/views/templates/hooks/';
 		
+		$this->message = array(
+			'text' => '',
+			'type' => 'conf'
+		);
 	}
 
 	/**
@@ -102,9 +106,16 @@ class MinicMailchimp extends Module
 	 */	
 	public function getContent()
 	{
+		if(Tools::isSubmit('submitSettings'))
+			$this->saveSettings();
+
+
+
 		// Smarty for admin
 		$this->smarty->assign('minic', array(
 			'first_start' 	 => Configuration::get(strtoupper($this->name).'_START'),
+			// Settings
+			'settings'		 => unserialize(Configuration::get('MINIC_MAILCHIMP_SETTINGS')),
 
 			'admin_tpl_path' => $this->admin_tpl_path,
 			'front_tpl_path' => $this->front_tpl_path,
@@ -125,7 +136,9 @@ class MinicMailchimp extends Module
         		'today' 	=> date('Y-m-d'),
         		'module'	=> $this->name,
         		'context'	=> (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') == 0) ? 1 : ($this->context->shop->getTotalShops() != 1) ? $this->context->shop->getContext() : 1,
-			)
+			),
+			'form_action' 	=> 'index.php?tab=AdminModules&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules').'&tab_module='. $this->tab .'&module_name='.$this->name,
+			'message' 		=> $this->message,
 		));
 			
 		// Change first start
@@ -133,6 +146,30 @@ class MinicMailchimp extends Module
 			Configuration::updateValue(strtoupper($this->name).'_START', 0);
 
 		return $this->display(__FILE__, 'views/templates/admin/minicmailchimp.tpl');
+	}
+
+	/**
+	 * Save settings into PS Configuration
+	 */
+	public function saveSettings()
+	{
+		$settings = array();
+
+		if(!Tools::isSubmit('apikey') || !Tools::getValue('apikey')){
+			$this->message = array('text' => $this->l('API Key is empty!'), 'type' => 'error');
+			return;
+		}
+		if(!Tools::getValue('ssl') && Tools::getValue('ssl') != 0){
+			$this->message = array('text' => $this->l('SSL save failed!'), 'type' => 'error');
+			return;	
+		}
+
+		$settings['apikey'] = Tools::getValue('apikey');
+		$settings['ssl'] = (int)Tools::getValue('ssl');
+
+		Configuration::updateValue('MINIC_MAILCHIMP_SETTINGS', serialize($settings));
+
+		$this->message['text'] = $this->l('Saved!');
 	}
 
 	// BACK OFFICE HOOKS

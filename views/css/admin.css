@@ -276,7 +276,8 @@
 			padding: 50px 3%;	
 		}
 			/* minic content -> input cotnainers */
-			.minic-content > div.input-holder{
+			.minic-content > div.input-holder,
+			.minic-content > div.switch-holder{
 				float: left;
 				clear: both;
 				width: 45%;

@@ -100,6 +100,11 @@
 		background-position: 0 -100px;
 	}
 /* ON/OFF switch */
+.switch-holder.inline > label{
+	float: left !important;
+	line-height: 26px;
+	margin-right: 10px;		
+}
 .switch{
 	-webkit-transition: all 0.4s ease-in-out;
 	-moz-transition: all 0.4s ease-in-out;
