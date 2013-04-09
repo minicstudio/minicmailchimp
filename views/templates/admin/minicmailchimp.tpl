@@ -19,19 +19,22 @@
 		</div>
 		<div id="banner"></div>
 		<div id="navigation">
-			<a href="#settings" class="minic-open">{l s='Settings' mod='minicmailchimp'}</a>
-			{if $minic.settings.apikey}
+			<a href="#mailchimp" class="minic-open" style="float: right;">{l s='Mailchimp configuration' mod='minicmailchimp'}</a>
+			{if $minic.mailchimp.apikey}
 				<a href="#import" class="minic-open">{l s='Import' mod='minicmailchimp'}</a>
+				<a href="#form" class="minic-open">{l s='Newsletter subscription' mod='minicmailchimp'}</a>
 			{/if}
 		</div>
 	</div>
 	<!-- Messages -->
 	{include file="{$minic.admin_tpl_path}messages.tpl" id="global" text=$minic.message.text class=$minic.message.type}
 	<!-- Settings -->
-	{include file="{$minic.admin_tpl_path}settings.tpl"}
-	{if $minic.settings.apikey}
+	{include file="{$minic.admin_tpl_path}mailchimp.tpl"}
+	{if $minic.mailchimp.apikey}
 		<!-- Import -->
 		{include file="{$minic.admin_tpl_path}import.tpl"}
+		<!-- Form -->
+		{include file="{$minic.admin_tpl_path}form.tpl"}
 	{/if}
 	<!-- feedback -->
 	{include file="{$minic.admin_tpl_path}feedback.tpl"}
