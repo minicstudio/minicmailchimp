@@ -9,11 +9,35 @@
         <div class="minic-content">
 	        <div class="input-holder">
                 <label>{l s='Choose the list to import' mod='minicmailchimp'}:</label>
-                <select name="list">
-                    {foreach from=$mailchimp_list.data item=list}
+                <select id="list-selector-import" name="list" class="list-selector">
+                    <option value="0"> - </option>
+                    {foreach from=$mailchimp_list item=list}
                     <option value="{$list.id}">{$list.name}</option>
                     {/foreach}
                 </select>
+            </div>
+            <div class="input-holder">
+                <label>{l s='Atach fields'}:</label>
+                {foreach from=$mailchimp_list key=k item=list}
+                {if isset($list.fields)}
+                    <div id="{$list.id}" class="fields-holder">
+                        {foreach from=$list.fields item=field}
+                            {if $field.tag != 'EMAIL'}
+                            <div style="clear:both;">
+                                <span>{$field.name}</span>
+                                <select name="fields[{$list.id}][{$field.tag}]">
+                                    <option value="0"> - </option>
+                                    <option value="firstname">{l s='First Name' mod='minicmailchimp'}</option>
+                                    <option value="lastname">{l s='Last Name' mod='minicmailchimp'}</option>
+                                </select>
+                                {if $field.req}<b>{l s='required' mod='minicmailchimp'}</b>{/if}
+                                {if $field.show == false}<b>{l s='hidden' mod='minicmailchimp'}</b>{/if}
+                            </div>
+                            {/if}
+                        {/foreach}
+                    </div>
+                {/if}
+                {/foreach}
             </div>
             <div class="switch-holder inline">
                 <label for="">{l s='Import all Customers'}:</label>

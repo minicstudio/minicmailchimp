@@ -58,7 +58,7 @@ class MinicMailchimp extends Module
 		$this->hooks_tpl_path	= _PS_MODULE_DIR_.$this->name.'/views/templates/hooks/';
 		
 		$this->message = array(
-			'text' => '',
+			'text' => false,
 			'type' => 'conf'
 		);
 	}
@@ -110,21 +110,9 @@ class MinicMailchimp extends Module
 	 */	
 	public function getContent()
 	{
-		if(!$this->getMailchimpLists())
-			$error = true;
-
-		if(Tools::isSubmit('submitSettings'))
-			$this->saveSettings();
-
-		if(Tools::isSubmit('submitImport'))
-			$this->importCustomers();
-
-
-		// Smarty for admin
-		$this->smarty->assign('minic', array(
+		// smarty for admin
+		$smarty_array = array(
 			'first_start' 	 => Configuration::get(strtoupper($this->name).'_START'),
-			// Settings
-			'settings'		 => unserialize(Configuration::get('MINIC_MAILCHIMP_SETTINGS')),
 
 			'admin_tpl_path' => $this->admin_tpl_path,
 			'front_tpl_path' => $this->front_tpl_path,
@@ -147,8 +135,30 @@ class MinicMailchimp extends Module
         		'context'	=> (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') == 0) ? 1 : ($this->context->shop->getTotalShops() != 1) ? $this->context->shop->getContext() : 1,
 			),
 			'form_action' 	=> 'index.php?tab=AdminModules&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules').'&tab_module='. $this->tab .'&module_name='.$this->name,
-			'message' 		=> $this->message,
-		));
+		);
+
+		// Mailchimp lists
+		$settings = unserialize(Configuration::get('MINIC_MAILCHIMP_SETTINGS'));
+		if (!$settings){
+			$this->message['text'] = $this->l('Before you start useing this module you need to configure it below!');
+		}else{
+			$this->api_key = $settings['apikey'];
+			$this->ssl = $settings['ssl'];
+
+			$this->getMailchimpLists();
+		}	
+		
+		// Handling settings
+		if(Tools::isSubmit('submitSettings'))
+			$this->saveSettings();
+		// Handling Import
+		if(Tools::isSubmit('submitImport'))
+			$this->importCustomers();		
+
+		// Smarty for admin
+		$smarty_array['mailchimp'] =  $settings;
+		$smarty_array['message'] =  $this->message;
+		$this->smarty->assign('minic', $smarty_array);
 			
 		// Change first start
 		if(Configuration::get(strtoupper($this->name).'_START') == 1)
@@ -159,11 +169,15 @@ class MinicMailchimp extends Module
 
 	public function importCustomers()
 	{
-		$all_customers = 0;
-		if(!Tools::isSubmit('list') || !Tools::getValue('list')){
+		// Get List id
+		$list_id = Tools::getValue('list');
+		if(!Tools::isSubmit('list') || !$list_id){
 			$this->message = array('text' => $this->l('List is required! Please select one.'), 'type' => 'error');
 			return;
 		}
+
+		// Get customer to import
+		$all_customers = 0;
 		if(!Tools::isSubmit('all-user')){
 			$this->message = array('text' => $this->l('The type of Customers to import is required.'), 'type' => 'error');
 			return;		
@@ -171,7 +185,40 @@ class MinicMailchimp extends Module
 			$all_customers = 1;
 		}
 
+		// Get all fields
+		$fields = Tools::getValue('fields');
 
+		// Get Customers list
+		$customers = Customer::getCustomers();
+		
+		// Creating import array
+		$list = array();
+		foreach ($customers as $customer_key => $customer) {
+			// Get customer data
+			$customer_details = new Customer($customer['id_customer']);
+
+			// populate array
+			$list[$customer_key]['EMAIL'] = $customer_details->email;
+			foreach ($fields[$list_id] as $key => $field) {
+				// mailchimp tag = customer field
+				$list[$customer_key][$key] = $customer_details->$field;
+			}
+		}
+
+		$optin = false; //yes, send optin emails
+		$up_exist = true; // yes, update currently subscribed users
+		$replace_int = false; // no, add interest, don't replace
+
+		$mailchimp = new MCAPI($this->api_key, $this->ssl);
+		$import = $mailchimp->listBatchSubscribe($list_id, $list, $optin, $up_exist, $replace_int);
+
+		if ($mailchimp->errorCode){
+			echo "Batch Subscribe failed!\n";
+			echo "code:".$mailchimp->errorCode."\n";
+			echo "msg :".$mailchimp->errorMessage."\n";
+		} else {
+			P($import);
+		}
 
 	}
 
@@ -179,15 +226,21 @@ class MinicMailchimp extends Module
 	{
 		$mailchimp = new MCAPI($this->api_key, $this->ssl);
 
-		$lists = $mailchimp->lists();
+		$list_response = $mailchimp->lists();
 
 		if ($mailchimp->errorCode){
 			$this->message = array('text' => $this->l('Mailchimp error code:').' '.$mailchimp->errorCode.'<br />'.$this->l('Milchimp message:').' '.$mailchimp->errorMessage, 'type' => 'error');
 			return;
 		} else {
+			$lists = '';
+			foreach ($list_response['data'] as $key => $value) {
+				$lists[$key] = $value;
+				$lists[$key]['fields'] = $mailchimp->listMergeVars($value['id']);
+			}
 			$this->context->smarty->assign('mailchimp_list', $lists);
 			return true;
 		}
+
 	}
 
 	/**
@@ -205,14 +258,14 @@ class MinicMailchimp extends Module
 			$this->message = array('text' => $this->l('SSL save failed!'), 'type' => 'error');
 			return;	
 		}
-		if(!Tools::getValue('registration') && Tools::getValue('registration') != 0){
-			$this->message = array('text' => $this->l('Sync new registration save failed!'), 'type' => 'error');
-			return;	
-		}
+		// if(!Tools::getValue('registration') && Tools::getValue('registration') != 0){
+		// 	$this->message = array('text' => $this->l('Sync new registration save failed!'), 'type' => 'error');
+		// 	return;	
+		// }
 
 		$settings['apikey'] = Tools::getValue('apikey');
-		$settings['ssl'] = (int)Tools::getValue('ssl');
-		$settings['registration'] = (int)Tools::getValue('registration');
+		$settings['ssl'] = ((int)Tools::getValue('ssl') == 1) ? true : false;
+		// $settings['registration'] = (int)Tools::getValue('registration');
 
 		Configuration::updateValue('MINIC_MAILCHIMP_SETTINGS', serialize($settings));
 
@@ -233,9 +286,11 @@ class MinicMailchimp extends Module
 		// CSS
 		$this->context->controller->addCSS($this->_path.'views/css/elusive-icons/elusive-webfont.css');
 		$this->context->controller->addCSS($this->_path.'views/css/admin.css');
+		$this->context->controller->addCSS($this->_path.'views/css/custom.css');
 		// JS
 		$this->context->controller->addJquery();
-		$this->context->controller->addJS($this->_path.'views/js/admin.js');	
+		$this->context->controller->addJS($this->_path.'views/js/admin.js');
+		$this->context->controller->addJS($this->_path.'views/js/custom.js');	
 	}
 
 	/**
