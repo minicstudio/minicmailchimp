@@ -157,7 +157,7 @@ class MinicMailchimp extends Module
 
 		// Smarty for admin
 		$smarty_array['mailchimp'] =  $settings;
-		$smarty_array['message'] =  $this->message;
+		$smarty_array['message'] =  ($this->message['text']) ? $this->message : false;
 		$this->smarty->assign('minic', $smarty_array);
 			
 		// Change first start
@@ -177,13 +177,13 @@ class MinicMailchimp extends Module
 		}
 
 		// Get customer to import
-		$all_customers = 0;
-		if(!Tools::isSubmit('all-user')){
-			$this->message = array('text' => $this->l('The type of Customers to import is required.'), 'type' => 'error');
-			return;		
-		}else{
-			$all_customers = 1;
-		}
+		$all_customers = (Tools::getValue('all_user')) ? true : false;
+		// if(!Tools::isSubmit('all-user')){
+		// 	$this->message = array('text' => $this->l('The type of Customers to import is required.'), 'type' => 'error');
+		// 	return;		
+		// }else{
+		// 	$all_customers = true;
+		// }
 
 		// Get all fields
 		$fields = Tools::getValue('fields');
@@ -197,7 +197,8 @@ class MinicMailchimp extends Module
 			// Get customer data
 			$customer_details = new Customer($customer['id_customer']);
 
-			// populate array
+			// populate customer array
+ 			// @TODO - kell ide ellenorzes hogy ha nem az osszes usert akarja csak a feliratkozokat
 			$list[$customer_key]['EMAIL'] = $customer_details->email;
 			foreach ($fields[$list_id] as $key => $field) {
 				// mailchimp tag = customer field
