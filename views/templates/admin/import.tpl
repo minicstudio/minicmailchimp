@@ -40,6 +40,20 @@
                 {/foreach}
             </div>
             <div class="switch-holder inline">
+                <label for="">{l s='Confirmation email'}:</label>
+                <div class="switch small inactive">
+                    <input type="radio" class="" name="optin"  value="0" checked="true" />
+                </div>
+                <p style="clear:both;">{l s='Turn on if you wish to send confirmation email for customers after import is done.' mod='minicmailchimp'}</p>
+            </div>
+            <div class="switch-holder inline">
+                <label for="">{l s='Update if exists'}:</label>
+                <div class="switch small inactive">
+                    <input type="radio" class="" name="update_users"  value="0" checked="true" />
+                </div>
+                <p style="clear:both;">{l s='Turn on if you wish to update the record if alredy exists. If you dont you\'ll receive a warning for those customers.' mod='minicmailchimp'}</p>
+            </div>
+            <div class="switch-holder inline">
                 <label for="">{l s='Import all Customers'}:</label>
                 <div class="switch small inactive">
                     <input type="radio" class="" name="all-user"  value="0" checked="true" />

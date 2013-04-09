@@ -147,7 +147,7 @@ class MinicMailchimp extends Module
 
 			$this->getMailchimpLists();
 		}	
-		
+
 		// Handling settings
 		if(Tools::isSubmit('submitSettings'))
 			$this->saveSettings();
@@ -205,19 +205,28 @@ class MinicMailchimp extends Module
 			}
 		}
 
-		$optin = false; //yes, send optin emails
-		$up_exist = true; // yes, update currently subscribed users
-		$replace_int = false; // no, add interest, don't replace
+		$optin = (Tools::getValue('optin')) ? true : false; //yes, send optin emails
+		$up_exist = (Tools::getValue('update_users')) ? true : false; // yes, update currently subscribed users
+		$replace_int = true; // no, add interest, don't replace
 
 		$mailchimp = new MCAPI($this->api_key, $this->ssl);
 		$import = $mailchimp->listBatchSubscribe($list_id, $list, $optin, $up_exist, $replace_int);
 
 		if ($mailchimp->errorCode){
-			echo "Batch Subscribe failed!\n";
-			echo "code:".$mailchimp->errorCode."\n";
-			echo "msg :".$mailchimp->errorMessage."\n";
+			$this->message = array('text' => $this->l('Mailchimp error code:').' '.$mailchimp->errorCode.'<br />'.$this->l('Milchimp message:').' '.$mailchimp->errorMessage, 'type' => 'error');
+			return;
 		} else {
-			P($import);
+			$this->message['text'] =  $this->l('Successfull imported:').' <b>'.$import['add_count'].'</b><br />';
+			$this->message['text'] .= $this->l('Successfull updated:').' <b>'.$import['update_count'].'</b><br />';
+			if($import['error_count'] > 0){
+				$this->message['text'] .= $this->l('Error occured:').' <b>'.$import['error_count'].'</b><br />';
+				foreach ($import['errors'] as $error) {
+					$this->message['text'] .= '<p style="margin-left: 15px;">';
+					$this->message['text'] .= $error['email'].' - '.$error['code'].' - '.$error['message'];
+					$this->message['text'] .= '</p>';
+				}
+				$this->message['type'] = 'warn';
+			}
 		}
 
 	}
