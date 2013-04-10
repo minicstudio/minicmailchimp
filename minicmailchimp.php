@@ -135,6 +135,7 @@ class MinicMailchimp extends Module
         		'context'	=> (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') == 0) ? 1 : ($this->context->shop->getTotalShops() != 1) ? $this->context->shop->getContext() : 1,
 			),
 			'form_action' 	=> 'index.php?tab=AdminModules&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules').'&tab_module='. $this->tab .'&module_name='.$this->name,
+			'hooks'			=> array('Top', 'LeftColumn', 'RightColumn', 'Footer', 'Home', 'LeftColumnProduct', 'RightColumProduct', 'FooterProduct')
 		);
 
 		// Mailchimp lists
@@ -154,6 +155,10 @@ class MinicMailchimp extends Module
 		// Handling Import
 		if(Tools::isSubmit('submitImport'))
 			$this->importCustomers();		
+		// Handling Form
+		if(Tools::isSubmit('submitForm'))
+			$this->saveSubscriberForm();
+
 
 		// Smarty for admin
 		$smarty_array['mailchimp'] =  $settings;
@@ -165,6 +170,38 @@ class MinicMailchimp extends Module
 			Configuration::updateValue(strtoupper($this->name).'_START', 0);
 
 		return $this->display(__FILE__, 'views/templates/admin/minicmailchimp.tpl');
+	}
+
+	/**
+	 * Save the subscriber form details
+	 */
+	public function saveSubscriberForm()
+	{
+		$form_settings = unserialize(Configuration::get('MINIC_MAILCHIMP_FORM'));
+		$hooks = array(
+			'old' => $form_setting['hooks'],
+			'new' => (Tools::isSubmit('hooks')) ? Tools::getValue('hooks') : false,
+		);
+		$form  = ( Tools::isSubmit('form')) ? Tools::getValue('form') : false;
+
+		if(!$hooks['new']){
+			$this->message = array('text' => $this->l('At least a hook is required to show the form.'), 'type' => 'error');			
+			return;
+		}
+		if(!$form){
+			$this->message = array('text' => $this->l('The form code is required!'), 'type' => 'error');
+			return;
+		}
+
+		foreach ($hooks['old'] as $hook) {
+			$this->unregisterHook($hook);
+		}
+
+		foreach ($hooks['new'] as $hook) {
+			$this->registerHook($hook);
+		}
+
+		Configuration::updateValue('MINIC_MAILCHIMP_FORM', serialize(array('form' => $form, 'hooks' => $hooks)));
 	}
 
 	/**
@@ -195,16 +232,20 @@ class MinicMailchimp extends Module
 			// populate customer array
  			if($all_customers){
  				$list[$customer_key]['EMAIL'] = $customer_details->email;
-				foreach ($fields[$list_id] as $key => $field) {
-					// mailchimp tag = customer field
-					$list[$customer_key][$key] = $customer_details->$field;
-				}
+ 				if(isset($fields[$list_id])){
+ 					foreach ($fields[$list_id] as $key => $field) {
+						// mailchimp tag = customer field
+						$list[$customer_key][$key] = $customer_details->$field;
+					}
+ 				}
  			}else if(!$all_customers && $customer_details->newsletter){
  				$list[$customer_key]['EMAIL'] = $customer_details->email;
-				foreach ($fields[$list_id] as $key => $field) {
-					// mailchimp tag = customer field
-					$list[$customer_key][$key] = $customer_details->$field;
-				}
+ 				if(isset($fields[$list_id])){
+ 					foreach ($fields[$list_id] as $key => $field) {
+						// mailchimp tag = customer field
+						$list[$customer_key][$key] = $customer_details->$field;
+					}
+ 				}
  			}
 		}
 
@@ -343,15 +384,7 @@ class MinicMailchimp extends Module
 	 */
 	public function hookDisplayHome($params)
 	{
-		$this->context->smarty->assign('MinicMailchimp', array(
-			'some_smarty_var' => 'some_data',
-			'some_smarty_array' => array(
-				'some_smarty_var' => 'some_data',
-				'some_smarty_var' => 'some_data'
-			),
-			'some_smarty_var' => 'some_data'
-		));
-
+		$this->samrty->assign('mailchimp_form', unserialize(Configuration::get('MINIC_MAILCHIMP_SETTINGS')));
 		return $this->display(__FILE__, 'views/tempaltes/hooks/home.tpl');
 	}
 
@@ -375,6 +408,30 @@ class MinicMailchimp extends Module
  	 * Footer hook
 	 */
 	public function hookDisplayFooter($params)
+	{
+		return $this->hookDisplayHome($params);
+	}
+
+	/**
+	 * 
+	 */
+	public function hookDisplayLeftColumnProduct($params)
+	{
+		return $this->hookDisplayHome($params);
+	}
+
+	/**
+	 * 
+	 */
+	public function hookDisplayRightColumProduct($params)
+	{
+		return $this->hookDisplayHome($params);
+	}
+
+	/**
+	 * 
+	 */
+	public function hookDisplayFooterProduct($params)
 	{
 		return $this->hookDisplayHome($params);
 	}
