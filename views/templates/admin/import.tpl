@@ -9,7 +9,7 @@
         <div class="minic-content">
 	        <div class="input-holder">
                 <label>{l s='Choose the list to import' mod='minicmailchimp'}:</label>
-                <select id="list-selector-import" name="list" class="list-selector">
+                <select id="list-selector-import" data-list="import" name="list" class="list-selector">
                     <option value="0"> - </option>
                     {foreach from=$mailchimp_list item=list}
                     <option value="{$list.id}">{$list.name}</option>
@@ -17,10 +17,10 @@
                 </select>
             </div>
             <div class="input-holder">
-                <label>{l s='Atach fields'}:</label>
+                <label>{l s='Attach fields' mod='minicmailchimp'}:</label>
                 {foreach from=$mailchimp_list key=k item=list}
                 {if isset($list.fields)}
-                    <div id="{$list.id}" class="fields-holder">
+                    <div id="import-{$list.id}" class="fields-holder">
                         {foreach from=$list.fields item=field}
                             {if $field.tag != 'EMAIL'}
                             <div style="clear:both;">
