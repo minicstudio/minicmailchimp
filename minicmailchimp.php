@@ -176,18 +176,10 @@ class MinicMailchimp extends Module
 			return;
 		}
 
-		// Get customer to import
-		$all_customers = (Tools::getValue('all_user')) ? true : false;
-		// if(!Tools::isSubmit('all-user')){
-		// 	$this->message = array('text' => $this->l('The type of Customers to import is required.'), 'type' => 'error');
-		// 	return;		
-		// }else{
-		// 	$all_customers = true;
-		// }
-
-		// Get all fields
+		// Get customers type
+		$all_customers = (Tools::getValue('all-user')) ? true : false;
+		// Get mailchimp fields
 		$fields = Tools::getValue('fields');
-
 		// Get Customers list
 		$customers = Customer::getCustomers();
 		
@@ -198,12 +190,19 @@ class MinicMailchimp extends Module
 			$customer_details = new Customer($customer['id_customer']);
 
 			// populate customer array
- 			// @TODO - kell ide ellenorzes hogy ha nem az osszes usert akarja csak a feliratkozokat
-			$list[$customer_key]['EMAIL'] = $customer_details->email;
-			foreach ($fields[$list_id] as $key => $field) {
-				// mailchimp tag = customer field
-				$list[$customer_key][$key] = $customer_details->$field;
-			}
+ 			if($all_customers){
+ 				$list[$customer_key]['EMAIL'] = $customer_details->email;
+				foreach ($fields[$list_id] as $key => $field) {
+					// mailchimp tag = customer field
+					$list[$customer_key][$key] = $customer_details->$field;
+				}
+ 			}else if(!$all_customers && $customer_details->newsletter){
+ 				$list[$customer_key]['EMAIL'] = $customer_details->email;
+				foreach ($fields[$list_id] as $key => $field) {
+					// mailchimp tag = customer field
+					$list[$customer_key][$key] = $customer_details->$field;
+				}
+ 			}
 		}
 
 		$optin = (Tools::getValue('optin')) ? true : false; //yes, send optin emails
