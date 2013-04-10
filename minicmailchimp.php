@@ -149,8 +149,8 @@ class MinicMailchimp extends Module
 		}	
 
 		// Handling settings
-		if(Tools::isSubmit('submitSettings'))
-			$this->saveSettings();
+		if(Tools::isSubmit('submitMailchimp'))
+			$this->configureMailchimp();
 		// Handling Import
 		if(Tools::isSubmit('submitImport'))
 			$this->importCustomers();		
@@ -167,6 +167,9 @@ class MinicMailchimp extends Module
 		return $this->display(__FILE__, 'views/templates/admin/minicmailchimp.tpl');
 	}
 
+	/**
+	 * Import customers into the selected Mailchimp list
+	 */
 	public function importCustomers()
 	{
 		// Get List id
@@ -205,9 +208,9 @@ class MinicMailchimp extends Module
  			}
 		}
 
-		$optin = (Tools::getValue('optin')) ? true : false; //yes, send optin emails
-		$up_exist = (Tools::getValue('update_users')) ? true : false; // yes, update currently subscribed users
-		$replace_int = true; // no, add interest, don't replace
+		$optin = (Tools::getValue('optin')) ? true : false; //send optin emails
+		$up_exist = (Tools::getValue('update_users')) ? true : false; //update currently subscribed users
+		$replace_int = true;
 
 		$mailchimp = new MCAPI($this->api_key, $this->ssl);
 		$import = $mailchimp->listBatchSubscribe($list_id, $list, $optin, $up_exist, $replace_int);
@@ -231,10 +234,14 @@ class MinicMailchimp extends Module
 
 	}
 
+	/**
+	 * Get all mailchimp list and the fields belongs to them
+	 */
 	public function getMailchimpLists()
 	{
 		$mailchimp = new MCAPI($this->api_key, $this->ssl);
 
+		// Get Mailchimp lists
 		$list_response = $mailchimp->lists();
 
 		if ($mailchimp->errorCode){
@@ -244,6 +251,7 @@ class MinicMailchimp extends Module
 			$lists = '';
 			foreach ($list_response['data'] as $key => $value) {
 				$lists[$key] = $value;
+				// Get list fields
 				$lists[$key]['fields'] = $mailchimp->listMergeVars($value['id']);
 			}
 			$this->context->smarty->assign('mailchimp_list', $lists);
@@ -253,28 +261,26 @@ class MinicMailchimp extends Module
 	}
 
 	/**
-	 * Save settings into PS Configuration
+	 * Save Mailchimp settings into PS Configuration (api key and ssl)
 	 */
-	public function saveSettings()
+	public function configureMailchimp()
 	{
 		$settings = array();
-
+		// Get apikey
 		if(!Tools::isSubmit('apikey') || !Tools::getValue('apikey')){
 			$this->message = array('text' => $this->l('API Key is empty!'), 'type' => 'error');
 			return;
 		}
+		// Get ssl
 		if(!Tools::getValue('ssl') && Tools::getValue('ssl') != 0){
 			$this->message = array('text' => $this->l('SSL save failed!'), 'type' => 'error');
 			return;	
 		}
-		// if(!Tools::getValue('registration') && Tools::getValue('registration') != 0){
-		// 	$this->message = array('text' => $this->l('Sync new registration save failed!'), 'type' => 'error');
-		// 	return;	
-		// }
 
-		$settings['apikey'] = Tools::getValue('apikey');
-		$settings['ssl'] = ((int)Tools::getValue('ssl') == 1) ? true : false;
-		// $settings['registration'] = (int)Tools::getValue('registration');
+		$settings = array(
+			'apikey' => Tools::getValue('apikey'),
+			'ssl'	 => ((int)Tools::getValue('ssl') == 1) ? true : false,
+		);
 
 		Configuration::updateValue('MINIC_MAILCHIMP_SETTINGS', serialize($settings));
 
