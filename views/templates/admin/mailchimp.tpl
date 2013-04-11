@@ -10,12 +10,14 @@
     		<div class="input-holder">
     			<label>{l s='Mailchimp API Key' mod='minicmailchimp'}:</label>
     			<input id="mailchimp-key" class="apikey" type="text" name="apikey" value="{if $minic.mailchimp.apikey}{$minic.mailchimp.apikey}{/if}" />
+                <p>{l s='The API key provided by Mailchimp' mod='minicmailchimp'}</p>
     		</div>
             <div class="switch-holder inline">
                 <label>{l s='Use SSL'}: </label>
                 <div class="switch small {if isset($minic.mailchimp.ssl) && $minic.mailchimp.ssl}active{else}inactive{/if}">
                     <input type="radio" class="" name="ssl"  value="{if isset($minic.mailchimp.ssl) && $minic.mailchimp.ssl}1{else}0{/if}" checked="true" />
                 </div>
+                <p>{l s='Turn on for secure (SSL) connection' mod='minicmailchimp'}</p>
             </div>
             <div class="minic-comments"> 
                 <h3>{l s='How to get your API key' mod='minicmailchimp'}</h3>
