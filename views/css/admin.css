@@ -113,6 +113,7 @@
 			}
 			#menu-top ul#module-list{
 				display: none;
+				z-index: 1;
 				position: absolute;
 				right: 0;
 				top: 15px;
