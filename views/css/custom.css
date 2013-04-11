@@ -6,9 +6,30 @@
 	-ms-box-sizing: border-box;
 	box-sizing: border-box;
 }
+#navigation > a{
+	position: relative;
+}
+#navigation > a > i{
+	position: absolute;
+	left: 50%;
+	margin-left: -17px;
+	top: 3px;
+	font-size: 34px;
+}
 .fields-holder{
 	display: none;
 }
 .fields-holder.visible-list{
 	display: block;
+}
+#form select{
+	padding: 10px 5px;
+	width: 250px;
+	min-height: 150px;
+}
+#form textarea{
+	min-height: 200px;
+}
+#form li{
+	margin-bottom: 5px;
 }
