@@ -19,10 +19,10 @@
 		</div>
 		<div id="banner"></div>
 		<div id="navigation">
-			<a href="#mailchimp" class="minic-open" style="float: right;">{l s='Mailchimp configuration' mod='minicmailchimp'}</a>
+			<a href="#mailchimp" class="minic-open mailchimp" style="float: right;"><i class="icon-cog"></i>{l s='Mailchimp API' mod='minicmailchimp'}</a>
 			{if $minic.mailchimp.apikey}
-				<a href="#import" class="minic-open">{l s='Import' mod='minicmailchimp'}</a>
-				<a href="#form" class="minic-open">{l s='Newsletter subscription' mod='minicmailchimp'}</a>
+				<a href="#import" class="minic-open import"><i class="icon-arrow-up"></i>{l s='Import' mod='minicmailchimp'}</a>
+				<a href="#form" class="minic-open form"><i class="icon-user"></i>{l s='Signup form' mod='minicmailchimp'}</a>
 			{/if}
 		</div>
 	</div>

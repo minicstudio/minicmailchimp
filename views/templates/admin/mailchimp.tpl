@@ -1,8 +1,8 @@
-<div id="mailchimp" class="minic-container" {if !$minic.mailchimp.apikey}style="display:block;"{/if}>{debug}
+<div id="mailchimp" class="minic-container" {if !$minic.mailchimp.apikey}style="display:block;"{/if}>
 	<form id="form-feed" class="" method="post" action="{$minic.form_action}">
         <div class="minic-top">
-            <h3>{l s='Mailchimp configuration' mod='minicmailchimp'}
-                <a href="#" target="_blank" class="help">{l s='help & tips' mod='minicmailchimp'}</a>
+            <h3>{l s='Mailchimp API configuration' mod='minicmailchimp'}
+                <!-- <a href="#" target="_blank" class="help">{l s='help & tips' mod='minicmailchimp'}</a> -->
             </h3>
             <a href="#mailchimp" class="minic-close">x</a>
         </div>
