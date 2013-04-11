@@ -11,9 +11,11 @@
                 <label>{l s='Choose where you want to import' mod='minicmailchimp'}:</label>
                 <select id="list-selector-import" data-list="import" name="list" class="list-selector">
                     <option value="0"> - </option>
+                    {if $mailchimp_list}
                     {foreach from=$mailchimp_list item=list}
                     <option value="{$list.id}">{$list.name}</option>
                     {/foreach}
+                    {/if}
                 </select>
                 <p>{l s='These are your Mailchimp lists, choose where do you want to import the subscribers.' mod='minicmailchimp'}</p>
             </div>
