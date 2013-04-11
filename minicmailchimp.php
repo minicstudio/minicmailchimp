@@ -24,9 +24,6 @@ require_once 'MCAPI.class.php';
 
 class MinicMailchimp extends Module
 {
-	// DB file
-	const INSTALL_SQL_FILE = 'install.sql';
-
 	private $api_key;
 	private $ssl;
 	private $module_path;
@@ -42,7 +39,6 @@ class MinicMailchimp extends Module
 		$this->author = 'minic studio';
 		$this->need_instance = 0;
 		$this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6'); 
-		// $this->dependencies = array('blockcart');
 
 		parent::__construct();
 
@@ -70,23 +66,6 @@ class MinicMailchimp extends Module
 	 */
 	public function install()
 	{
-		// Create DB tables - uncomment below to use the install.sql for database manipulation
-		/*
-		if (!file_exists(dirname(__FILE__).'/'.self::INSTALL_SQL_FILE))
-			return false;
-		else if (!$sql = file_get_contents(dirname(__FILE__).'/'.self::INSTALL_SQL_FILE))
-			return false;
-		$sql = str_replace(array('PREFIX_', 'ENGINE_TYPE'), array(_DB_PREFIX_, _MYSQL_ENGINE_), $sql);
-		// Insert default template data
-		$sql = str_replace('THE_FIRST_DEFAULT', serialize(array('width' => 1, 'height' => 1)), $sql);
-		$sql = str_replace('FLY_IN_DEFAULT', serialize(array('width' => 1, 'height' => 1)), $sql);
-		$sql = preg_split("/;\s*[\r\n]+/", trim($sql));
-
-		foreach ($sql as $query)
-			if (!Db::getInstance()->execute(trim($query)))
-				return false;
-		*/
-
 		if (!parent::install() || 
 			!$this->registerHook('displayHome') || 
 			!$this->registerHook('displayHeader') || 
@@ -286,13 +265,16 @@ class MinicMailchimp extends Module
  			}
 		}
 
+		// listBatchSubscribe configuration
 		$optin = (Tools::getValue('optin')) ? true : false; //send optin emails
 		$up_exist = (Tools::getValue('update_users')) ? true : false; //update currently subscribed users
 		$replace_int = true;
 
+		// Import customers
 		$mailchimp = new MCAPI($this->api_key, $this->ssl);
 		$import = $mailchimp->listBatchSubscribe($list_id, $list, $optin, $up_exist, $replace_int);
 
+		// Process response
 		if ($mailchimp->errorCode){
 			$this->message = array('text' => $this->l('Mailchimp error code:').' '.$mailchimp->errorCode.'<br />'.$this->l('Milchimp message:').' '.$mailchimp->errorMessage, 'type' => 'error');
 			return;
