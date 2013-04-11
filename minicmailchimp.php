@@ -61,6 +61,8 @@ class MinicMailchimp extends Module
 			'text' => false,
 			'type' => 'conf'
 		);
+
+		$this->hooks = array('Top', 'LeftColumn', 'RightColumn', 'Footer', 'Home', 'LeftColumnProduct', 'RightColumProduct', 'FooterProduct');
 	}
 
 	/**
@@ -100,7 +102,10 @@ class MinicMailchimp extends Module
 	 */
 	public function uninstall()
 	{
-		if (!parent::uninstall() || !Configuration::deleteByName('MINIC_MAILCHIMP_SETTINGS'))
+		if (!parent::uninstall() || 
+			!Configuration::deleteByName(strtoupper($this->name).'_START') || 
+			!Configuration::deleteByName('MINIC_MAILCHIMP_SETTINGS') || 
+			!Configuration::deleteByName('MINIC_MAILCHIMP_FORM'))
 			return false;
 		return true;
 	}
@@ -110,6 +115,7 @@ class MinicMailchimp extends Module
 	 */	
 	public function getContent()
 	{
+		$languages = Language::getLanguages(false);
 		// smarty for admin
 		$smarty_array = array(
 			'first_start' 	 => Configuration::get(strtoupper($this->name).'_START'),
@@ -135,8 +141,18 @@ class MinicMailchimp extends Module
         		'context'	=> (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') == 0) ? 1 : ($this->context->shop->getTotalShops() != 1) ? $this->context->shop->getContext() : 1,
 			),
 			'form_action' 	=> 'index.php?tab=AdminModules&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules').'&tab_module='. $this->tab .'&module_name='.$this->name,
-			'hooks'			=> array('Top', 'LeftColumn', 'RightColumn', 'Footer', 'Home', 'LeftColumnProduct', 'RightColumProduct', 'FooterProduct')
+			'hooks'			=> $this->hooks,
+			'languages'		=> $languages,
+			'default_lang' 	=> $this->context->language->id,
+			'flags'			=> array(
+				'title' => $this->displayFlags($languages, $this->context->language->id, 'title¤form', 'title', true),
+				'form'	=> $this->displayFlags($languages, $this->context->language->id, 'title¤form', 'form', true)
+			)
 		);
+
+		// Handling settings
+		if(Tools::isSubmit('submitMailchimp'))
+			$this->configureMailchimp();
 
 		// Mailchimp lists
 		$settings = unserialize(Configuration::get('MINIC_MAILCHIMP_SETTINGS'));
@@ -149,9 +165,6 @@ class MinicMailchimp extends Module
 			$this->getMailchimpLists();
 		}	
 
-		// Handling settings
-		if(Tools::isSubmit('submitMailchimp'))
-			$this->configureMailchimp();
 		// Handling Import
 		if(Tools::isSubmit('submitImport'))
 			$this->importCustomers();		
@@ -161,8 +174,9 @@ class MinicMailchimp extends Module
 
 
 		// Smarty for admin
-		$smarty_array['mailchimp'] =  $settings;
-		$smarty_array['message'] =  ($this->message['text']) ? $this->message : false;
+		$smarty_array['mailchimp'] 	= $settings;
+		$smarty_array['message'] 	= ($this->message['text']) ? $this->message : false;
+		$smarty_array['form']		= unserialize(Configuration::get('MINIC_MAILCHIMP_FORM'));
 		$this->smarty->assign('minic', $smarty_array);
 			
 		// Change first start
@@ -177,15 +191,19 @@ class MinicMailchimp extends Module
 	 */
 	public function saveSubscriberForm()
 	{
+		$def_lang = $this->context->language->id;
+		// Get saved form data
 		$form_settings = unserialize(Configuration::get('MINIC_MAILCHIMP_FORM'));
+		// Prepear hooks array
 		$hooks = array(
-			'old' => $form_setting['hooks'],
+			'old' => ($form_settings) ? $form_settings['hooks'] : false,
 			'new' => (Tools::isSubmit('hooks')) ? Tools::getValue('hooks') : false,
 		);
-		$form  = ( Tools::isSubmit('form')) ? Tools::getValue('form') : false;
+		// Get form
+		$form  = ( Tools::isSubmit('form_'.$def_lang)) ? Tools::getValue('form_'.$def_lang) : false;
 
 		if(!$hooks['new']){
-			$this->message = array('text' => $this->l('At least a hook is required to show the form.'), 'type' => 'error');			
+			$this->message = array('text' => $this->l('At least a hook is required to show the form.'), 'type' => 'error');
 			return;
 		}
 		if(!$form){
@@ -193,15 +211,34 @@ class MinicMailchimp extends Module
 			return;
 		}
 
-		foreach ($hooks['old'] as $hook) {
-			$this->unregisterHook($hook);
+		// Unhook from all possible hooks
+		foreach ($this->hooks as $hook) {
+			if($this->isRegisteredInHook('display'.$hook))
+				$this->unregisterHook('display'.$hook);
 		}
 
-		foreach ($hooks['new'] as $hook) {
-			$this->registerHook($hook);
+		// Hook
+		if($hooks['new']){ // pointless ?
+			foreach ($hooks['new'] as $hook) {
+				$this->registerHook('display'.$hook);
+			}
 		}
 
-		Configuration::updateValue('MINIC_MAILCHIMP_FORM', serialize(array('form' => $form, 'hooks' => $hooks)));
+		// Save
+		$data = array();
+		$languages = Language::getLanguages(false);
+		foreach ($languages as $key => $lang) {
+			$title = ( Tools::isSubmit('title_'.$lang['id_lang'])) ? Tools::getValue('title_'.$lang['id_lang']) : false;
+
+			$data[$lang['id_lang']] = array(
+				'title' => ($title) ? $title : Tools::getValue('title_'.$def_lang),
+				'form'  => ( $form) ? htmlspecialchars($form)  : htmlspecialchars(Tools::getValue('form_'.$def_lang)),
+			);
+		}
+
+		if(Configuration::updateValue('MINIC_MAILCHIMP_FORM', serialize(array('data' => $data, 'hooks' => $hooks['new']))))
+			$this->message['text'] = $this->l('Saved!');
+
 	}
 
 	/**
@@ -229,7 +266,7 @@ class MinicMailchimp extends Module
 			// Get customer data
 			$customer_details = new Customer($customer['id_customer']);
 
-			// populate customer array
+			// Populate customer array
  			if($all_customers){
  				$list[$customer_key]['EMAIL'] = $customer_details->email;
  				if(isset($fields[$list_id])){
@@ -376,16 +413,24 @@ class MinicMailchimp extends Module
 	 */
 	public function hookDisplayTop($params)
 	{
-		return $this->hookDisplayHome($params);
+		return $this->hookDisplayHome($params, 'top');
 	}
 
 	/**
  	 * Home page hook
 	 */
-	public function hookDisplayHome($params)
+	public function hookDisplayHome($params, $class = false)
 	{
-		$this->samrty->assign('mailchimp_form', unserialize(Configuration::get('MINIC_MAILCHIMP_SETTINGS')));
-		return $this->display(__FILE__, 'views/tempaltes/hooks/home.tpl');
+		$data = unserialize(Configuration::get('MINIC_MAILCHIMP_FORM'));
+		if(!$data)
+			return;
+
+		$smarty['class'] = ($class) ? $class : 'home';
+		$smarty['title'] = $data['data'][$this->context->language->id]['title'];
+		$smarty['form']  = $data['data'][$this->context->language->id]['form'];
+
+		$this->smarty->assign('mailchimp_form', $smarty);
+		return $this->display(__FILE__, 'views/templates/hooks/home.tpl');
 	}
 
 	/**
@@ -393,7 +438,7 @@ class MinicMailchimp extends Module
 	 */
 	public function hookDisplayRightColumn($params)
 	{
-		return $this->hookDisplayHome($params);
+		return $this->hookDisplayHome($params, 'right');
 	}
 
 	/**
@@ -401,7 +446,7 @@ class MinicMailchimp extends Module
 	 */
 	public function hookDisplayLeftColumn($params)
 	{
-	 	return $this->hookDisplayHome($params);
+	 	return $this->hookDisplayHome($params, 'left');
 	}
 
 	/**
@@ -409,32 +454,30 @@ class MinicMailchimp extends Module
 	 */
 	public function hookDisplayFooter($params)
 	{
-		return $this->hookDisplayHome($params);
+		return $this->hookDisplayHome($params, 'footer');
 	}
 
 	/**
-	 * 
+	 * Product page hook
 	 */
 	public function hookDisplayLeftColumnProduct($params)
 	{
-		return $this->hookDisplayHome($params);
+		return $this->hookDisplayHome($params, 'left-product');
 	}
 
 	/**
-	 * 
+	 * Product page hook
 	 */
 	public function hookDisplayRightColumProduct($params)
 	{
-		return $this->hookDisplayHome($params);
+		return $this->hookDisplayHome($params, 'right-product');
 	}
 
 	/**
-	 * 
+	 * Product page hook
 	 */
 	public function hookDisplayFooterProduct($params)
 	{
-		return $this->hookDisplayHome($params);
+		return $this->hookDisplayHome($params, 'footer-product');
 	}
 }
-
-?>
