@@ -11,11 +11,10 @@ We decided to share this simple module with the community, so who want to use em
 - you can place a newsletter subscriber form on your site (many and multiple hooks are supported!)
 
 ###Installation
-As usual! Upload the downloaded .zip via Prestashop backend or the unzipped content to your modules directory. Than go to the Advertising & Marketing [/color][color=#343943]tab on the modules configuration page and install it.
+As usual! Upload the downloaded .zip via Prestashop backend or the unzipped content to your modules directory. Than go to the Advertising & Marketing tab on the modules configuration page and install it.
 
 ###Download
-  minicmailchimp-v1.0.0.zip   254.44K   0 downloads
-You also can download from Github or from our blog.
+You also can download from the official [Prestashop forum](http://www.prestashop.com/forums/topic/239373-free-module-minic-mailchimp-for-ps-15/page__p__1181355#entry1181355) or from our [blog](http://module.minic.ro/minicmailchimp/).
 
 ###Changelog
 v1.0.0
