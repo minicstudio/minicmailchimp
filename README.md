@@ -1,6 +1,6 @@
 ##minicmailchimp
 
-We can agree in that, currently Mailchimp is the best email-marketing provider out there. We strongly recommend Mailchimp to our customers so it was time to us to make a module to manage subscribers and forms easily.
+We can agree in that, currently [Mailchimp](http://mailchimp.com) is the best email-marketing provider out there. We strongly recommend Mailchimp to our customers so it was time to us to make a module to manage subscribers and forms easily.
 
 This free simple module was developed to our customers. There are lots of modules which can be bought, and knows lots of great features but those features are unnecessary and pay for them is just waste of money.
 
