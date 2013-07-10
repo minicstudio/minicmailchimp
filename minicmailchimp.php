@@ -35,7 +35,7 @@ class MinicMailchimp extends Module
 	{
 		$this->name = 'minicmailchimp';
 		$this->tab = 'advertising_marketing';
-		$this->version = '1.0.0';
+		$this->version = '1.0.2';
 		$this->author = 'minic studio';
 		$this->need_instance = 0;
 		$this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6'); 
