@@ -17,5 +17,9 @@ As usual! Upload the downloaded .zip via Prestashop backend or the unzipped cont
 You also can download from the official [Prestashop forum](http://www.prestashop.com/forums/topic/239373-free-module-minic-mailchimp-for-ps-15/page__p__1181355#entry1181355) or from our [blog](http://module.minic.ro/minicmailchimp/).
 
 ###Changelog
+v1.0.2 - 10.07.2013
+- fixed default Mailchimp button height
+- changed form instruction according to the new Mailchimp design
+
 v1.0.0
 - release
