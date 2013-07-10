@@ -40,10 +40,11 @@
                 <ol style="list-style: decimal;">
                     <li>{l s='Log in into' mod='minicmailchimp'} <a href="https://login.mailchimp.com/" target="_blank">Mailchimp</a>.</li>
                     <li>{l s='Go to the lists, and select a list where you want the subscribers to subscribe.' mod='minicmailchimp'}</li>
-                    <li>{l s='Search the "For Your Website" dropwdown menu and select the "Signup Form Embed Code".' mod='minicmailchimp'}</li>
+                    <li>{l s='Select the "Signup Forms".' mod='minicmailchimp'}</li>
+                    <li>{l s='Select the "Embedded forms".' mod='minicmailchimp'}</li>
                     <li>{l s='Configure your form to serve your needs.' mod='minicmailchimp'}</li>
-                    <li>{l s='Click the "Create Embed Code" button, and copy the HTML code below.' mod='minicmailchimp'}</li>
-                    <li>{l s='Paste the code into the textfield.' mod='minicmailchimp'}</li>
+                    <li>{l s='Copy the HTML code at the bottom of the page.' mod='minicmailchimp'}</li>
+                    <li>{l s='Paste the code into the textfield here.' mod='minicmailchimp'}</li>
                 </ol>
                 <h3>{l s='Important' mod='minicmailchimp'}</h3>
                 <p>{l s='If you wish to use the module properly and you have multiple languages enabled, then do not forget to change the titles and other texts in the form code (if you do not understand the HTML code you can do it when you configure the form on the Mailchimp website, just repeat the steps above and change the titles).' mod='minicmailchimp'}</p>
